@@ -1,0 +1,6 @@
+D:\Users\moonl\source\repos\FE3D\FE3D\bin\Release\FE3D.dll
+D:\Users\moonl\source\repos\FE3D\FE3D\bin\Release\FE3D.pdb
+D:\Users\moonl\source\repos\FE3D\FE3D\obj\Release\FE3D.csprojAssemblyReference.cache
+D:\Users\moonl\source\repos\FE3D\FE3D\obj\Release\FE3D.csproj.CoreCompileInputs.cache
+D:\Users\moonl\source\repos\FE3D\FE3D\obj\Release\FE3D.dll
+D:\Users\moonl\source\repos\FE3D\FE3D\obj\Release\FE3D.pdb
