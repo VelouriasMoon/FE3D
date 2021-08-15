@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DSDecmp.Formats.Nitro;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,6 +52,29 @@ namespace FE3D.IO
             {
                 instream.CopyTo(memoryStream);
                 return memoryStream.ToArray();
+            }
+        }
+
+        public static byte[] LZ11Decompress(byte[] compressed)
+        {
+            using (MemoryStream cstream = new MemoryStream(compressed))
+            {
+                using (MemoryStream dstream = new MemoryStream())
+                {
+                    (new LZ11()).Decompress(cstream, compressed.Length, dstream);
+                    return dstream.ToArray();
+                }
+            }
+        }
+        public static byte[] LZ11Compress(byte[] decompressed)
+        {
+            using (MemoryStream dstream = new MemoryStream(decompressed))
+            {
+                using (MemoryStream cstream = new MemoryStream())
+                {
+                    (new LZ11()).Compress(dstream, decompressed.Length, cstream);
+                    return cstream.ToArray();
+                }
             }
         }
     }
