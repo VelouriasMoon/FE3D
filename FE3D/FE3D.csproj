@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CTPK.cs" />
     <Compile Include="DSDecmp\Exceptions\InputTooLargeException.cs" />
     <Compile Include="DSDecmp\Exceptions\NotEnoughDataException.cs" />
     <Compile Include="DSDecmp\Exceptions\StreamTooShortException.cs" />
