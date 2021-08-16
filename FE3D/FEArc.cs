@@ -81,6 +81,10 @@ namespace FE3D
                 }
                 z++;
             }
+            while ((int)newFile.Tell() % 4 != 0)
+            {
+                newFile.Write(nil); //align bytes after files are added
+            }
 
             long countinfo = newFile.Tell();
             newFile.Write(FileCount);
