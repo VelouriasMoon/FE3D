@@ -396,7 +396,7 @@ namespace FE3D.GovanifY
             return buffer;
         }
 
-        /// <summary>Reads a NULL-terminated string from the current stream.</summary>
+        /// <summary>Reads a NULL-terminated Unicode string from the current stream.</summary>
         /// <returns>The string being read without the terminating NULL.</returns>
         /// <exception cref="System.IO.EndOfStreamException">The end of the stream is reached.</exception>
         /// <exception cref="System.IO.IOException">An I/O error occurs.</exception>
@@ -418,15 +418,44 @@ namespace FE3D.GovanifY
             var buffer = new char[1];
             do
             {
-                if (IntReadChars(buffer, 0, 1, encoding, decoder) == 0)
-                {
-                    throw new EndOfStreamException();
-                }
+                
                 if (buffer[0] == '\0')
                 {
                     break;
                 }
                 s.Append(buffer[0]);
+            } while (true);
+            return s.ToString();
+        }
+
+        /// <summary>Reads a NULL-terminated string Encoded with Shift-JIS from the current stream.</summary>
+        /// <returns>The string being read without the terminating NULL.</returns>
+        /// <exception cref="System.IO.EndOfStreamException">The end of the stream is reached.</exception>
+        /// <exception cref="System.IO.IOException">An I/O error occurs.</exception>
+        /// <exception cref="System.NotSupportedException">The stream does not support reading.</exception>
+        /// <exception cref="System.ObjectDisposedException">The stream is closed.</exception>
+        public string ReadShiftJISString()
+        {
+            if (_stream == null)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+            if (!_stream.CanRead)
+            {
+                throw new NotSupportedException();
+            }
+            var s = new StringBuilder();
+            Encoding encoding = _cEncoding;
+            byte[] buffer = new byte[1];
+            do
+            {
+                FillBuffer(1);
+                if (_buffer[0] == 0x0)
+                {
+                    break;
+                }
+                buffer[0] = _buffer[0];
+                s.Append(Encoding.GetEncoding(932).GetString(buffer));
             } while (true);
             return s.ToString();
         }
