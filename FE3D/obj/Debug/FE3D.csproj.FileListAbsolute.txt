@@ -4,3 +4,6 @@ D:\Users\moonl\source\repos\FE3D\FE3D\obj\Debug\FE3D.csprojAssemblyReference.cac
 D:\Users\moonl\source\repos\FE3D\FE3D\obj\Debug\FE3D.csproj.CoreCompileInputs.cache
 D:\Users\moonl\source\repos\FE3D\FE3D\obj\Debug\FE3D.dll
 D:\Users\moonl\source\repos\FE3D\FE3D\obj\Debug\FE3D.pdb
+D:\Users\moonl\source\repos\FE3D\FE3D\bin\Debug\System.Numerics.Vectors.dll
+D:\Users\moonl\source\repos\FE3D\FE3D\bin\Debug\System.Numerics.Vectors.xml
+D:\Users\moonl\source\repos\FE3D\FE3D\obj\Debug\FE3D.csproj.CopyComplete
