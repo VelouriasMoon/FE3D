@@ -35,11 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\TestingCode\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CTPK.cs" />
     <Compile Include="DSDecmp\Exceptions\InputTooLargeException.cs" />
     <Compile Include="DSDecmp\Exceptions\NotEnoughDataException.cs" />
     <Compile Include="DSDecmp\Exceptions\StreamTooShortException.cs" />
@@ -72,75 +66,6 @@
     <Compile Include="FEMessage.cs" />
     <Compile Include="GY_BinaryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Spica\Formats\Common\BitUtils.cs" />
-    <Compile Include="Spica\Formats\Common\CRC32Hash.cs" />
-    <Compile Include="Spica\Formats\Common\Exceptions.cs" />
-    <Compile Include="Spica\Formats\Common\FNV1a.cs" />
-    <Compile Include="Spica\Formats\Common\INamed.cs" />
-    <Compile Include="Spica\Formats\Common\INameIndexed.cs" />
-    <Compile Include="Spica\Formats\Common\InvalidMagicException.cs" />
-    <Compile Include="Spica\Formats\Common\IOUtils.cs" />
-    <Compile Include="Spica\Formats\Common\IPatriciaDict.cs" />
-    <Compile Include="Spica\Formats\Common\IPatriciaTreeNode.cs" />
-    <Compile Include="Spica\Formats\Common\KeyFrame.cs" />
-    <Compile Include="Spica\Formats\Common\KeyFrameQuantization.cs" />
-    <Compile Include="Spica\Formats\Common\KeyFrameQuantizationHelper.cs" />
-    <Compile Include="Spica\Formats\Common\PatriciaTree.cs" />
-    <Compile Include="Spica\Formats\Common\StringUtils.cs" />
-    <Compile Include="Spica\Formats\Common\TextureTransform.cs" />
-    <Compile Include="Spica\Formats\Common\TextureTransformType.cs" />
-    <Compile Include="Spica\Math3D\Interpolation.cs" />
-    <Compile Include="Spica\Math3D\Matrix.cs" />
-    <Compile Include="Spica\Math3D\Matrix3x3.cs" />
-    <Compile Include="Spica\Math3D\Matrix3x4.cs" />
-    <Compile Include="Spica\Math3D\RGBA.cs" />
-    <Compile Include="Spica\Math3D\Vector.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAAlphaTest.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAAttribute.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAAttributeFormat.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAAttributeName.cs" />
-    <Compile Include="Spica\PICA\Commands\PICABlendEquation.cs" />
-    <Compile Include="Spica\PICA\Commands\PICABlendFunc.cs" />
-    <Compile Include="Spica\PICA\Commands\PICABlendFunction.cs" />
-    <Compile Include="Spica\PICA\Commands\PICABlendMode.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAColorOperation.cs" />
-    <Compile Include="Spica\PICA\Commands\PICADepthColorMask.cs" />
-    <Compile Include="Spica\PICA\Commands\PICADrawMode.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAFaceCulling.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAFixedAttribute.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAFragOpMode.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALogicalOp.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALUTInAbs.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALUTInput.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALUTInScale.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALUTInSel.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALUTScale.cs" />
-    <Compile Include="Spica\PICA\Commands\PICALUTType.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAPrimitiveMode.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAStencilOp.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAStencilOperation.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAStencilTest.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATestFunc.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATexEnvCombiner.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATexEnvOperand.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATexEnvScale.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATexEnvSource.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATexEnvStage.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureCombinerAlphaOp.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureCombinerColorOp.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureCombinerMode.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureCombinerScale.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureCombinerSource.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureFilter.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureFormat.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureSamplerType.cs" />
-    <Compile Include="Spica\PICA\Commands\PICATextureWrap.cs" />
-    <Compile Include="Spica\PICA\Commands\PICAVectorFloat24.cs" />
-    <Compile Include="Spica\PICA\Converters\TextureCompression.cs" />
-    <Compile Include="Spica\PICA\Converters\TextureConverter.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
