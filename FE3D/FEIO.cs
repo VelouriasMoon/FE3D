@@ -77,5 +77,53 @@ namespace FE3D.IO
                 }
             }
         }
+
+        /// <summary>
+        /// Reads Bytes from an Array
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="lenght"></param>
+        /// <param name="startindex"></param>
+        /// <returns>Array of the bytes read</returns>
+        /// <exception cref="ArgumentNullException"><c>array</c> is null</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><c>length</c> or <c>start</c> is greated than array size</exception>
+        public static byte[] ReadBytesFromArray(byte[] array, uint lenght, uint start = 0)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            if (array.Length < lenght)
+                throw new ArgumentOutOfRangeException("array");
+            if (start < 0 || start > array.Length)
+                throw new ArgumentOutOfRangeException("start");
+
+            byte[] result = new byte[lenght];
+            Array.Copy(array, start, result, 0, lenght);
+            return result;
+        }
+
+        /// <summary>
+        /// Reads a NULL-terminated string from
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        public static string ReadStringFromArray(byte[] array, Encoding encoding, uint start = 0)
+        {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            if (array.Length < start)
+                throw new ArgumentOutOfRangeException("start");
+            if (encoding == null) encoding = Encoding.UTF8;
+            
+            List<byte> result = new List<byte>();
+
+            while (array[start] != 0)
+            {
+                result.Add(array[start]);
+                start++;
+            }
+
+            return encoding.GetString(result.ToArray());
+        }
     }
 }
