@@ -111,13 +111,18 @@ namespace SPICA.Formats.CtrH3D
 
         public static void Save(string FileName, H3D Scene)
         {
-            using (FileStream FS = new FileStream(FileName, FileMode.Create))
+            File.WriteAllBytes(FileName, H3D.Save(Scene));
+        }
+
+        public static byte[] Save(H3D Scene)
+        {
+            using (MemoryStream MS = new MemoryStream())
             {
                 H3DHeader Header = new H3DHeader();
 
-                H3DRelocator Relocator = new H3DRelocator(FS, Header);
+                H3DRelocator Relocator = new H3DRelocator(MS, Header);
 
-                BinarySerializer Serializer = new BinarySerializer(FS, GetSerializationOptions());
+                BinarySerializer Serializer = new BinarySerializer(MS, GetSerializationOptions());
 
                 Section Contents = Serializer.Sections[(uint)H3DSectionId.Contents];
 
@@ -134,21 +139,21 @@ namespace SPICA.Formats.CtrH3D
                 Comparison<RefValue> CompStr = H3DComparers.GetComparisonStr();
                 Comparison<RefValue> CompRaw = H3DComparers.GetComparisonRaw();
 
-                Section Strings    = new Section(0x10, CompStr);
-                Section Commands   = new Section(0x80);
-                Section RawData    = new Section(0x80, CompRaw);
-                Section RawExt     = new Section(0x80, CompRaw);
+                Section Strings = new Section(0x10, CompStr);
+                Section Commands = new Section(0x80);
+                Section RawData = new Section(0x80, CompRaw);
+                Section RawExt = new Section(0x80, CompRaw);
                 Section Relocation = new Section();
 
-                Serializer.AddSection((uint)H3DSectionId.Strings,    Strings,  typeof(string));
-                Serializer.AddSection((uint)H3DSectionId.Strings,    Strings,  typeof(H3DStringUtf16));
-                Serializer.AddSection((uint)H3DSectionId.Commands,   Commands, typeof(uint[]));
-                Serializer.AddSection((uint)H3DSectionId.RawData,    RawData);
-                Serializer.AddSection((uint)H3DSectionId.RawExt,     RawExt);
+                Serializer.AddSection((uint)H3DSectionId.Strings, Strings, typeof(string));
+                Serializer.AddSection((uint)H3DSectionId.Strings, Strings, typeof(H3DStringUtf16));
+                Serializer.AddSection((uint)H3DSectionId.Commands, Commands, typeof(uint[]));
+                Serializer.AddSection((uint)H3DSectionId.RawData, RawData);
+                Serializer.AddSection((uint)H3DSectionId.RawExt, RawExt);
                 Serializer.AddSection((uint)H3DSectionId.Relocation, Relocation);
 
                 Header.BackwardCompatibility = Scene.BackwardCompatibility;
-                Header.ForwardCompatibility  = Scene.ForwardCompatibility;
+                Header.ForwardCompatibility = Scene.ForwardCompatibility;
 
                 Header.ConverterVersion = Scene.ConverterVersion;
 
@@ -156,30 +161,31 @@ namespace SPICA.Formats.CtrH3D
 
                 Serializer.Serialize(Scene);
 
-                Header.AddressCount  = (ushort)RawData.Values.Count;
+                Header.AddressCount = (ushort)RawData.Values.Count;
                 Header.AddressCount += (ushort)RawExt.Values.Count;
 
                 Header.UnInitDataLength = Header.AddressCount * 4;
 
                 Header.ContentsAddress = Contents.Position;
-                Header.StringsAddress  = Strings.Position;
+                Header.StringsAddress = Strings.Position;
                 Header.CommandsAddress = Commands.Position;
-                Header.RawDataAddress  = RawData.Position;
-                Header.RawExtAddress   = RawExt.Position;
+                Header.RawDataAddress = RawData.Position;
+                Header.RawExtAddress = RawExt.Position;
 
                 Header.RelocationAddress = Relocation.Position;
 
                 Header.ContentsLength = Contents.Length;
-                Header.StringsLength  = Strings.Length;
+                Header.StringsLength = Strings.Length;
                 Header.CommandsLength = Commands.Length;
-                Header.RawDataLength  = RawData.Length;
-                Header.RawExtLength   = RawExt.Length;
+                Header.RawDataLength = RawData.Length;
+                Header.RawExtLength = RawExt.Length;
 
                 Relocator.ToRelative(Serializer);
 
-                FS.Seek(0, SeekOrigin.Begin);
+                MS.Seek(0, SeekOrigin.Begin);
 
                 Serializer.WriteValue(Header);
+                return MS.ToArray();
             }
         }
 
