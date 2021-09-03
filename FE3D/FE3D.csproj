@@ -62,7 +62,7 @@
     <Compile Include="DSDecmp\Utils\SimpleReversePrioQueue.cs" />
     <Compile Include="FEArc.cs" />
     <Compile Include="FEBin.cs" />
-    <Compile Include="FEIO.cs" />
+    <Compile Include="FEIO\FEIO.cs" />
     <Compile Include="FEMessage.cs" />
     <Compile Include="GY_BinaryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,16 +10,16 @@ namespace FE3D.IO
 {
     public static class FEIO
     {
-        public static uint ReadUint32FromLEArray(byte[] array)
-        {
-            return (uint)(array[0] | (array[1] << 8) | (array[2] << 16) | (array[3] << 24));
-        }
-        public static uint ReadUint32FromLEArray(byte[] array, uint index)
-        {
-            return (uint)(array[index + 0] | (array[index + 1] << 8) | (array[index + 2] << 16) | (array[index + 3] << 24));
-        }
+        /// <summary>
+        /// Reads a hex formated string and returns a byte array
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
         public static byte[] HexStringToByteArray(string hexString)
         {
+            if (hexString.StartsWith("0x"))
+                hexString = hexString.Substring(2);
+
             if (hexString.Length % 2 != 0)
             {
                 throw new ArgumentException("String cannot be an odd number in length");
@@ -35,6 +35,31 @@ namespace FE3D.IO
             return data;
         }
 
+        /// <summary>
+        /// Converts a byte array into a hex string
+        /// </summary>
+        /// <param name="array">Input Array</param>
+        /// <param name="LittleEndian">Byte Order for string</param>
+        /// <param name="prefix">Addes "0x" to the start of the string</param>
+        /// <returns></returns>
+        public static string ByteArrayToHexString(byte[] array, bool LittleEndian = true, bool prefix = true)
+        {
+            if (LittleEndian)
+                Array.Reverse(array);
+
+            string result = BitConverter.ToString(array, 0, array.Length).Replace("-","");
+
+            if (prefix)
+                return $"0x{result}";
+            else
+                return result;
+        }
+
+        /// <summary>
+        /// Reads the first 4 bytes of the byte array returns a string if present
+        /// </summary>
+        /// <param name="inbytes"></param>
+        /// <returns></returns>
         public static string GetMagic(byte[] inbytes)
         {
             byte[] header = new byte[4];
@@ -82,27 +107,27 @@ namespace FE3D.IO
         /// Reads Bytes from an Array
         /// </summary>
         /// <param name="array"></param>
-        /// <param name="lenght"></param>
+        /// <param name="length"></param>
         /// <param name="startindex"></param>
         /// <returns>Array of the bytes read</returns>
         /// <exception cref="ArgumentNullException"><c>array</c> is null</exception>
         /// <exception cref="ArgumentOutOfRangeException"><c>length</c> or <c>start</c> is greated than array size</exception>
-        public static byte[] ReadBytesFromArray(byte[] array, uint lenght, uint start = 0)
+        public static byte[] ReadBytesFromArray(byte[] array, uint length, uint start = 0)
         {
             if (array == null)
                 throw new ArgumentNullException("array");
-            if (array.Length < lenght)
+            if (array.Length < length)
                 throw new ArgumentOutOfRangeException("array");
             if (start < 0 || start > array.Length)
                 throw new ArgumentOutOfRangeException("start");
 
-            byte[] result = new byte[lenght];
-            Array.Copy(array, start, result, 0, lenght);
+            byte[] result = new byte[length];
+            Array.Copy(array, start, result, 0, length);
             return result;
         }
 
         /// <summary>
-        /// Reads a NULL-terminated string from
+        /// Reads a NULL-terminated string from a given byte array
         /// </summary>
         /// <param name="array"></param>
         /// <param name="start"></param>
@@ -112,7 +137,7 @@ namespace FE3D.IO
             if (array == null)
                 throw new ArgumentNullException("array");
             if (array.Length < start)
-                throw new ArgumentOutOfRangeException("start");
+                throw new ArgumentOutOfRangeException("encoding");
             if (encoding == null) encoding = Encoding.UTF8;
             
             List<byte> result = new List<byte>();
