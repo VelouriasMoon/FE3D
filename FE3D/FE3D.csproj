@@ -63,6 +63,7 @@
     <Compile Include="FEArc.cs" />
     <Compile Include="FEBin.cs" />
     <Compile Include="FEIO\FEIO.cs" />
+    <Compile Include="FEIO\ArrayReader.cs" />
     <Compile Include="FEMessage.cs" />
     <Compile Include="GY_BinaryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
