@@ -47,7 +47,7 @@ namespace FE3D
             for (uint i = 0; i < ptr1count; i++)
             {
                 uint loc = bin.ReadUInt32();
-                uint des = LittleEndian.ReadUInt32FromArray(datasection, loc);
+                uint des = ArrayReader.ReadUInt32FromArray(datasection, loc);
 
                 try
                 {
@@ -183,7 +183,7 @@ namespace FE3D
                     long CurrentPos = outbin.Tell();
                     if (line.StartsWith("0x")) //Convert the raw data string into bytes
                     {
-                        uint data = Convert.ToUInt32(LittleEndian.ReadUInt32FromArray(FEIO.HexStringToByteArray(line.Replace("0x", ""))));
+                        uint data = Convert.ToUInt32(ArrayReader.ReadUInt32FromArray(FEIO.HexStringToByteArray(line.Replace("0x", ""))));
                         outbin.Write(data);
                     }
                     else if (line.StartsWith("POINTER1")) //Write dummy bytes and log pointer number
