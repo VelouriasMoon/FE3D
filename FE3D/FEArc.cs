@@ -27,7 +27,7 @@ namespace FE3D
         public uint Alignment { get; set; } = 128;
 
         /// <summary>
-        /// Reads an FEarc.
+        /// Reads an FEArc.
         /// </summary>
         /// <param name="binaryStream"></param>
         public void Read(BinaryStream binaryStream)
@@ -109,6 +109,10 @@ namespace FE3D
             ms.Close();
         }
 
+        /// <summary>
+        /// Writes an FEArc
+        /// </summary>
+        /// <param name="binaryStream"></param>
         public void Write(BinaryStream binaryStream)
         {
             var ShiftJIS = Encoding.GetEncoding(932);
@@ -200,14 +204,19 @@ namespace FE3D
             ms.Close();
         }
 
-        public void PackArc(string inpath)
+        /// <summary>
+        /// Packs files into an Arc
+        /// </summary>
+        /// <param name="inpath"></param>
+        public void PackArc(string inpath, uint Alignment = 128, bool Padding = true)
         {
             FEArc arc = new FEArc();
             string[] files = Directory.GetFiles(inpath, "*", SearchOption.AllDirectories);
 
             arc.Files = new List<byte[]>();
             arc.FileNames = new List<string>();
-            arc.Alignment = 0;
+            arc.Alignment = Alignment;
+            arc.Padding = Padding;
 
             foreach (string file in files)
             {
