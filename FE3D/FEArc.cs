@@ -90,10 +90,10 @@ namespace FE3D
         /// <summary>Extracts an .arc archive file used in 3ds FE games.</summary>
         /// <param name="outdir"> Output folder where files will be extracted to</param>
         /// <param name="archive"> Input bytes to read</param>
-        public void ExtractArc(string ourdir, byte[] archive)
+        public static void ExtractArc(string ourdir, byte[] archive)
         {
             if (Directory.Exists(ourdir))
-                Directory.Delete(ourdir);
+                Directory.Delete(ourdir, true);
             Directory.CreateDirectory(ourdir);
 
             MemoryStream ms = new MemoryStream(archive);
@@ -208,7 +208,7 @@ namespace FE3D
         /// Packs files into an Arc
         /// </summary>
         /// <param name="inpath"></param>
-        public void PackArc(string inpath, uint Alignment = 128, bool Padding = true)
+        public static void PackArc(string inpath, uint Alignment = 128, bool Padding = true)
         {
             FEArc arc = new FEArc();
             string[] files = Directory.GetFiles(inpath, "*", SearchOption.AllDirectories);
