@@ -53,6 +53,7 @@
     <Compile Include="DSDecmp\Formats\Nitro\CompositeFormats.cs" />
     <Compile Include="DSDecmp\Formats\Nitro\Huffman.cs" />
     <Compile Include="DSDecmp\Formats\Nitro\LZ10.cs" />
+    <Compile Include="DSDecmp\Formats\Nitro\LZ13.cs" />
     <Compile Include="DSDecmp\Formats\Nitro\LZ11.cs" />
     <Compile Include="DSDecmp\Formats\Nitro\NitroCFormat.cs" />
     <Compile Include="DSDecmp\Formats\Nitro\NullCompression.cs" />

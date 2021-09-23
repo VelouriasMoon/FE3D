@@ -57,7 +57,7 @@ namespace DSDecmp.Formats.Nitro
         /// Creates a new instance of the format composed of all native NDS compression formats.
         /// </summary>
         public CompositeNDSFormat()
-            : base(new Huffman4(), new Huffman8(), new LZ10(), new LZ11()) { }
+            : base(new Huffman4(), new Huffman8(), new LZ10(), new LZ11(), new LZ13()) { }
 
         /// <summary>
         /// Gets a short string identifying this compression format.
