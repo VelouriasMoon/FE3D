@@ -16,17 +16,17 @@ namespace FE3D.Image
     {
         public string Magic { get; } = "CTPK";              //Always CTPK
         public ushort Version { get; set; } = 1;            //only seen 1 but other versions might exist
-        public ushort TexNum { get; set; }                  //number of textures stored
-        public uint TexDataOffset { get; set; }             //pointer to the raw texture data
-        public uint TotalTexSize { get; set; }              //total size of all texture data
-        public uint HashOffset { get; set; }                //Pointer to the hash data location
-        public uint FormatInfoOffset { get; set; }          //Pointer to the Format Info location
-        public List<CTPKData> TextureData { get; set; }     //Data for each texture split into 0x20 sized sections
-        public List<uint> TextureSize { get; set; }         //Each image size stored as a uint
-        public List<string> FileName { get; set; }          //Each file name stored null terminate Shift-JIS encoded strings
-        public List<CTPKHash> NameHash { get; set; }        //Name hash info for each image split into 0x8 sized sections
-        public List<CTPKInfo> FormatInfo { get; set; }      //Format info for each image split into 0x4 sized sections
-        public List<Bitmap> Textures { get; set; }          //Raw bytes for each image based on image encoding
+        public ushort TexNum { get; set; } = 0;                  //number of textures stored
+        public uint TexDataOffset { get; set; } = 0;             //pointer to the raw texture data
+        public uint TotalTexSize { get; set; } = 0;              //total size of all texture data
+        public uint HashOffset { get; set; } = 0;                //Pointer to the hash data location
+        public uint FormatInfoOffset { get; set; } = 0;          //Pointer to the Format Info location
+        public List<CTPKData> TextureData { get; set; } = new List<CTPKData>();     //Data for each texture split into 0x20 sized sections
+        public List<uint> TextureSize { get; set; } = new List<uint>();         //Each image size stored as a uint
+        public List<string> FileName { get; set; } = new List<string>();          //Each file name stored null terminate Shift-JIS encoded strings
+        public List<CTPKHash> NameHash { get; set; } = new List<CTPKHash>();        //Name hash info for each image split into 0x8 sized sections
+        public List<CTPKInfo> FormatInfo { get; set; } = new List<CTPKInfo>();      //Format info for each image split into 0x4 sized sections
+        public List<Bitmap> Textures { get; set; } = new List<Bitmap>();          //Raw bytes for each image based on image encoding
 
         public void Read(BinaryStream binaryStream)
         {
@@ -128,22 +128,26 @@ namespace FE3D.Image
                 data.Write(binaryStream);
             }
 
-            foreach (uint size in TextureSize)
+            for (int i = 0; i < TextureSize.Count; i++)
             {
-                binaryStream.Write(size);
+                TextureData[i].BitmapSizeOffset = (uint)(binaryStream.Tell() / 4);
+                binaryStream.Write(TextureSize[i]);
             }
 
-            foreach (string name in FileName)
+            for (int i = 0; i < FileName.Count; i++)
             {
-                binaryStream.Write(ShiftJIS.GetBytes(name));
+                TextureData[i].NameOffset = (uint)binaryStream.Tell();
+                binaryStream.Write(ShiftJIS.GetBytes(FileName[i]));
                 binaryStream.Write((byte)0);
             }
 
+            long hashoffset = binaryStream.Tell();
             foreach (CTPKHash hash in NameHash)
             {
                 hash.Write(binaryStream);
             }
 
+            long infooffset = binaryStream.Tell();
             foreach (CTPKInfo info in FormatInfo)
             {
                 info.Write(binaryStream);
@@ -154,38 +158,89 @@ namespace FE3D.Image
                 binaryStream.Write((byte)0);
             }
 
-            foreach (Bitmap texture in Textures)
+            long textureoffset = binaryStream.Tell();
+            for (int i = 0;  i < Textures.Count; i++)
             {
-                binaryStream.Write(TextureConverter.Encode(texture, (PICATextureFormat)imageformat));
+                TextureData[i].TexDataOffset = (uint)(binaryStream.Tell() - textureoffset);
+                binaryStream.Write(TextureConverter.Encode(Textures[i], (PICATextureFormat)imageformat));
             }
 
             //Rewrite Data properly
-            binaryStream.Seek(0, SeekOrigin.Begin);
+            binaryStream.Seek(8, SeekOrigin.Begin);
+            binaryStream.Write((uint)textureoffset);
+            binaryStream.Seek(4, SeekOrigin.Current);
+            binaryStream.Write((uint)hashoffset);
+            binaryStream.Write((uint)infooffset);
+            binaryStream.Seek(8, SeekOrigin.Current);
+
+            foreach (CTPKData data in TextureData)
+            {
+                data.Write(binaryStream);
+            }
         }
 
-        public CTPK Makectpk(string[] infiles, CTPKFormat imageformat = CTPKFormat.Rgba8)
+        public static void MakeCTPK(string inpath, CTPKFormat imageformat = CTPKFormat.Rgba8)
         {
             if (imageformat != CTPKFormat.Rgba8)
                 throw new NotImplementedException();
             CTPK ctpk = new CTPK();
             var ShiftJIS = Encoding.GetEncoding(932);
+            string[] files = Directory.GetFiles(inpath, "*", SearchOption.AllDirectories);
 
-            ctpk.TexNum = (ushort)infiles.Length;
-
-            for (int i = 0; i < infiles.Length; i++)
+            int i = 0;
+            foreach (string file in files)
             {
-                Bitmap texture = (Bitmap)Bitmap.FromFile(infiles[i]);
+                Bitmap texture;
+                try
+                {
+                    texture = (Bitmap)Bitmap.FromFile(file);
+                }
+                catch (Exception e)
+                {
+                    i++;
+                    continue;
+                }
 
                 ctpk.TextureData.Add(new CTPKData() { Width = (ushort)texture.Width, Height = (ushort)texture.Height, Format = imageformat });
-                ctpk.TextureSize.Add(0);
-                ctpk.NameHash.Add(new CTPKHash() { crc32Hash = CRC32Hash.Hash(ShiftJIS.GetBytes(Path.GetFileName(infiles[i]))), Index = (uint)i });
+                ctpk.TextureSize.Add(Convert.ToUInt32(TextureConverter.CalculateLength(texture.Width, texture.Height, (PICATextureFormat)imageformat)));
+                ctpk.NameHash.Add(new CTPKHash() { crc32Hash = CRC32Hash.Hash(ShiftJIS.GetBytes(Path.GetFileName(file).Replace(Path.GetExtension(file), ""))), Index = (uint)i });
                 ctpk.FormatInfo.Add(new CTPKInfo() { TextureFormat = imageformat, Compression = false, ETCEncoding = 8 });
 
-                ctpk.FileName.Add(Path.GetFileName(infiles[i]));
+                ctpk.FileName.Add(Path.GetFileName(file.Replace(Path.GetExtension(file),"")));
                 ctpk.Textures.Add(texture);
+                ctpk.TexNum += Convert.ToUInt16(i + 1);
+                ctpk.TotalTexSize += Convert.ToUInt32(TextureConverter.CalculateLength(texture.Width, texture.Height, (PICATextureFormat)imageformat));
+                i++;
             }
 
-            return ctpk;
+            MemoryStream ms = new MemoryStream();
+            BinaryStream bs = new BinaryStream(ms);
+            ctpk.Write(bs);
+            string outpath = inpath + ".ctpk";
+            File.WriteAllBytes(outpath, ms.ToArray());
+            ms.Close();
+        }
+
+        public static void ExtractCTPK(string infile)
+        {
+            string outpath = infile.Replace(Path.GetExtension(infile), "");
+            if (Directory.Exists(outpath))
+                Directory.Delete(outpath, true);
+            Directory.CreateDirectory(outpath);
+            using (FileStream fs = new FileStream(infile, FileMode.Open))
+            {
+                BinaryStream bs = new BinaryStream(fs);
+                CTPK ctpk = new CTPK();
+                ctpk.Read(bs);
+
+                foreach(Bitmap image in ctpk.Textures)
+                {
+                    string filename = ctpk.FileName[ctpk.Textures.IndexOf(image)];
+                    if (filename.Contains("R:/"))
+                        filename = Path.GetFileNameWithoutExtension(filename.Replace("/","\\"));
+                    image.Save($"{outpath}\\{filename}.png");
+                }
+            }
         }
 
         public class CTPKData
@@ -198,7 +253,7 @@ namespace FE3D.Image
             public ushort Height { get; set; }
             public byte Mipmap { get; set; } //number of mipmap
             public byte Type { get; set; } = 2; //only seen type 2 but there might be more
-            public ushort CubeMap { get; } = 0; //used for cubemaps
+            public ushort CubeMap { get; set; } = 0; //used for cubemaps
             public uint BitmapSizeOffset { get; set; } //real location of size in Texture size list / 4
             public uint TimeStamp { get; set; } //timestamp when file was created, can be disable
 
@@ -212,7 +267,7 @@ namespace FE3D.Image
                 Height = binaryStream.ReadUInt16();
                 Mipmap = binaryStream.ReadByte();
                 Type = binaryStream.ReadByte();
-                //CubeMap = binaryStream.ReadUInt16();
+                CubeMap = binaryStream.ReadUInt16();
                 BitmapSizeOffset = binaryStream.ReadUInt32();
                 TimeStamp = binaryStream.ReadUInt32();
             }
