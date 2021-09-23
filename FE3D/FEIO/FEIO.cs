@@ -80,6 +80,29 @@ namespace FE3D.IO
             }
         }
 
+        public static byte[] LZ10Decompress(byte[] compressed)
+        {
+            using (MemoryStream cstream = new MemoryStream(compressed))
+            {
+                using (MemoryStream dstream = new MemoryStream())
+                {
+                    (new LZ10()).Decompress(cstream, compressed.Length, dstream);
+                    return dstream.ToArray();
+                }
+            }
+        }
+        public static byte[] LZ10Compress(byte[] decompressed)
+        {
+            using (MemoryStream dstream = new MemoryStream(decompressed))
+            {
+                using (MemoryStream cstream = new MemoryStream())
+                {
+                    (new LZ10()).Compress(dstream, decompressed.Length, cstream);
+                    return cstream.ToArray();
+                }
+            }
+        }
+
         public static byte[] LZ11Decompress(byte[] compressed)
         {
             using (MemoryStream cstream = new MemoryStream(compressed))
@@ -98,6 +121,29 @@ namespace FE3D.IO
                 using (MemoryStream cstream = new MemoryStream())
                 {
                     (new LZ11()).Compress(dstream, decompressed.Length, cstream);
+                    return cstream.ToArray();
+                }
+            }
+        }
+
+        public static byte[] LZ13Decompress(byte[] compressed)
+        {
+            using (MemoryStream cstream = new MemoryStream(compressed))
+            {
+                using (MemoryStream dstream = new MemoryStream())
+                {
+                    (new LZ13()).Decompress(cstream, compressed.Length, dstream);
+                    return dstream.ToArray();
+                }
+            }
+        }
+        public static byte[] LZ13Compress(byte[] decompressed)
+        {
+            using (MemoryStream dstream = new MemoryStream(decompressed))
+            {
+                using (MemoryStream cstream = new MemoryStream())
+                {
+                    (new LZ13()).Compress(dstream, decompressed.Length, cstream);
                     return cstream.ToArray();
                 }
             }
