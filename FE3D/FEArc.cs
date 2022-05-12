@@ -104,7 +104,10 @@ namespace FE3D
 
             for (int i = 0; i < arc.Files.Count; i++)
             {
-                File.WriteAllBytes(ourdir + Path.DirectorySeparatorChar + arc.FileNames[i], arc.Files[i]);
+                string outpath = ourdir + Path.DirectorySeparatorChar + arc.FileNames[i];
+                if (!Directory.Exists(Path.GetDirectoryName(outpath)))
+                    Directory.CreateDirectory(Path.GetDirectoryName(outpath));
+                File.WriteAllBytes(outpath, arc.Files[i]);
             }
             ms.Close();
         }
