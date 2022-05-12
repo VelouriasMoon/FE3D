@@ -196,5 +196,32 @@ namespace FE3D.IO
 
             return encoding.GetString(result.ToArray());
         }
+
+        /// <summary>
+        /// Checks a byte for the specified bit, returns false if 0 otherwise returns true.
+        /// </summary>
+        /// <param name="inbyte"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static bool GetBit(byte inbyte, int index)
+        {
+            index &= 7;
+            return (inbyte >> index & 1) != 0;
+        }
+
+        /// <summary>
+        /// Sets a specified bit to 1 or 0 in a byte.
+        /// </summary>
+        /// <param name="inbyte"></param>
+        /// <param name="Index"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte SetBit(byte inbyte, int Index, bool value)
+        {
+            Index &= 7;
+            inbyte &= (byte)~(1 << Index);
+            inbyte |= (byte)((value ? 1 : 0) << Index);
+            return inbyte;
+        }
     }
 }
