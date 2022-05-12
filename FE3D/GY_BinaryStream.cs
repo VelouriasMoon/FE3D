@@ -460,6 +460,14 @@ namespace FE3D.GovanifY
             return s.ToString();
         }
 
+        public float ReadFloat()
+        {
+            FillBuffer(4);
+            byte[] buffer = new byte[] { _buffer[0], _buffer[1], _buffer[2], _buffer[3] };
+
+            return BitConverter.ToSingle(buffer, 0);
+        }
+
         /// <summary>
         ///     Reads a 2-byte unsigned integer from the current stream respecting <c>IsLittleEndian</c> and advances the
         ///     position of the stream by two bytes.
