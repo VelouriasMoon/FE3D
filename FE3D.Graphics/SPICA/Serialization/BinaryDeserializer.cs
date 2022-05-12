@@ -331,9 +331,12 @@ namespace SPICA.Serialization
 
                     BaseStream.Seek(Address, SeekOrigin.Begin);
 
-                    Value = IsList(Type)
+                    if (Address <= BaseStream.Length)
+                    {
+                        Value = IsList(Type)
                         ? ReadList(Type, Range, Length)
                         : ReadValue(Type, true);
+                    }
 
                     BaseStream.Seek(Position, SeekOrigin.Begin);
                 }
