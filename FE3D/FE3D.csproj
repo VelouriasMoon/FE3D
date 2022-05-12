@@ -67,6 +67,7 @@
     <Compile Include="FEIO\ArrayReader.cs" />
     <Compile Include="FEMessage.cs" />
     <Compile Include="GY_BinaryStream.cs" />
+    <Compile Include="LZ13.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
