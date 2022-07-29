@@ -238,7 +238,7 @@ namespace FE3D.Image
                     string filename = ctpk.FileName[ctpk.Textures.IndexOf(image)];
                     if (filename.Contains("R:/"))
                         filename = Path.GetFileNameWithoutExtension(filename.Replace("/","\\"));
-                    image.Save($"{outpath}\\{filename}.png");
+                    image.Save($"{outpath}\\{Path.GetFileNameWithoutExtension(filename)}.png");
                 }
             }
         }
