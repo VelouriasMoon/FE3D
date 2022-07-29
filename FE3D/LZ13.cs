@@ -18,6 +18,85 @@ namespace FE3D.Compression
             return CompressFile(indata);
         }
 
+        public static byte[] CalculateLZ13Header(byte[] data)
+        {
+            if (data.Length > 0xffffff)
+                throw new Exception("Decompressed file is too large");
+
+            byte[] _buffer = new byte[4];
+            int maxlead = 0, sp = 0, BufferLength = 9, fc = 0, bp = 0;
+
+            while (sp < data.Length)
+            {
+                int length = 1, refer = 0, x = sp < 4096 ? sp : 4096;
+                while (x >= 2)
+                {
+                    int y = sp;
+                    while (y < data.Length && data[y] == data[y - x])
+                        y++;
+                    y -= sp;
+                    if (y >= 3 && y > length)
+                    {
+                        length = y;
+                        refer = x;
+                    }
+                    x--;
+                }
+
+                if (length == 1)
+                {
+                    BufferLength++;
+                    sp++;
+                }
+                else
+                {
+                    refer--;
+                    sp += length;
+
+                    if (length <= 2)
+                        throw new Exception("Some type of error just labeled \"big oops\", very helpful cow");
+                    else if (length <= 0x10)
+                        BufferLength++;
+                    else if (length <= 0x110)
+                    {
+                        BufferLength += 2;
+                    }
+                    else
+                    {
+                        BufferLength += 3;
+                    }
+                    BufferLength++;
+                }
+
+                int lead = sp - BufferLength;
+                if (maxlead < lead)
+                    maxlead = lead;
+
+                fc++;
+                if ((fc & 7) == 0)
+                    bp = BufferLength++;
+            }
+
+            if (BufferLength < data.Length + 4)
+            {
+                int blen = maxlead + BufferLength;
+                _buffer[0] = 0x13;
+                _buffer[1] = (byte)(blen);
+                _buffer[2] = (byte)(blen >> 8);
+                _buffer[3] = (byte)(blen >> 16);
+            }
+            else
+            {
+                _buffer[0] = 0x0;
+                _buffer[1] = (byte)(data.Length);
+                _buffer[2] = (byte)(data.Length >> 8);
+                _buffer[3] = (byte)(data.Length >> 16);
+            }
+
+            byte[] final = new byte[4];
+            Array.Copy(_buffer, 0, final, 0, 4);
+            return final;
+        }
 
         private static byte[] CompressFile(byte[] data)
         {
@@ -53,7 +132,7 @@ namespace FE3D.Compression
 
                     _buffer[bp] |= (byte)(128 >> (fc & 7));        
                     if (length <= 2)
-                        throw new Exception("Some time of error just labeled \"big oops\", very helpful cow");
+                        throw new Exception("Some type of error just labeled \"big oops\", very helpful cow");
                     else if (length <= 0x10)
                         _buffer[BufferLength++] = (byte)(refer >> 8 | length - 1 << 4);
                     else if (length <= 0x110)

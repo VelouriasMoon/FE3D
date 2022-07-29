@@ -139,7 +139,18 @@ namespace FE3D.IO
         }
         public static byte[] LZ13Compress(byte[] decompressed)
         {
-            return Compression.LZ13.Compress(decompressed);
+            using (MemoryStream dstream = new MemoryStream(decompressed))
+            {
+                using (MemoryStream cstream = new MemoryStream())
+                {
+                    (new LZ13()).Compress(dstream, decompressed.Length, cstream);
+                    byte[] lz13file = cstream.ToArray();
+                    byte[] lz13Header = Compression.LZ13.CalculateLZ13Header(decompressed);
+                    Array.Copy(lz13Header, 0, lz13file, 0, 4);
+                    Array.Resize(ref lz13file, lz13file.Length + 1);
+                    return lz13file;
+                }
+            }
         }
 
         /// <summary>
